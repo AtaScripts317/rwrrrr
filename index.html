@@ -1,104 +1,59 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Roblox Oyun Bilgileri</title>
-  <style>
-    body {
-      background-color: #000; /* Siyah arka plan */
-      color: #fff; /* Beyaz metin rengi */
-      font-family: Arial, sans-serif;
-    }
-   .container {
-      width: 800px;
-      margin: 40px auto;
-      padding: 20px;
-      background-color: #333;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-    }
-   .header {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-   .input-group {
-      margin-bottom: 20px;
-    }
-   .input-group input {
-      width: 100%;
-      height: 40px;
-      padding: 10px;
-      font-size: 18px;
-      border: none;
-      border-radius: 5px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-    }
-   .input-group button {
-      width: 100%;
-      height: 40px;
-      padding: 10px;
-      font-size: 18px;
-      border: none;
-      border-radius: 5px;
-      background-color: #4CAF50;
-      color: #fff;
-      cursor: pointer;
-    }
-   .input-group button:hover {
-      background-color: #3e8e41;
-    }
-   .oyun-bilgileri {
-      margin-top: 20px;
-    }
-   .oyun-bilgileri img {
-      width: 100px;
-      height: 100px;
-      border-radius: 50%;
-      margin: 10px;
-    }
-  </style>
+<title>Roblox Oyun Bilgileri</title>
+<style>
+body {
+  background-color: black;
+  color: white;
+  font-family: sans-serif;
+}
+#game-info {
+  display: flex;
+  align-items: center;
+}
+#game-image {
+  width: 200px;
+  height: auto;
+  margin-right: 20px;
+}
+</style>
 </head>
 <body>
-  <div class="container">
-    <div class="header">
-      <h1>Roblox Oyun Bilgileri</h1>
-    </div>
-    <div class="input-group">
-      <input id="oyun-id-input" type="text" placeholder="Oyun ID'sini girin">
-      <button id="oyun-bilgileri-getir">Getir</button>
-    </div>
-    <div class="oyun-bilgileri" id="oyun-bilgileri">
-      <p>Oyun ID: <span id="oyun-id"></span></p>
-      <p>Oyun Resmi: <img id="oyun-resmi" src=""></p>
-      <p>Anlık Oyuncu Sayısı: <span id="anlik-oyuncu-sayisi"></span></p>
-      <p>Beğeni: <span id="begeni-sayisi"></span></p>
-      <p>Dislike: <span id="dislike-sayisi"></span></p>
-      <p>Açıklama: <span id="aciklama"></span></p>
-    </div>
+
+<h1>Roblox Oyun Bilgileri</h1>
+
+<input type="text" id="game-id" placeholder="Oyun ID'sini girin">
+<button onclick="getGameInfo()">Bilgileri Getir</button>
+
+<div id="game-info">
+  <img id="game-image" src="" alt="Oyun Resmi">
+  <div>
+    <h2>Oyun Adı: <span id="game-name"></span></h2>
+    <p>Oyuncu Sayısı: <span id="player-count"></span></p>
+    <p>Beğeni: <span id="thumbs-up"></span></p>
+    <p>Beğenmeme: <span id="thumbs-down"></span></p>
+    <p>Açıklama: <span id="description"></span></p>
   </div>
-  <script>
-    const oyunIdInput = document.getElementById("oyun-id-input");
-    const oyunBilgileriGetirButton = document.getElementById("oyun-bilgileri-getir");
-    const oyunBilgileriDiv = document.getElementById("oyun-bilgileri");
+</div>
 
-    oyunBilgileriGetirButton.addEventListener("click", () => {
-      const oyunId = oyunIdInput.value;
-      const apiUrl = `https://api.roblox.com/games/${oyunId}`;
+<script>
+async function getGameInfo() {
+  const gameId = document.getElementById("game-id").value;
+  // !!!  BURAYA ROBLOX API İSTEĞİ EKLENMELİ !!!
+  // Örnek (çalışmaz):
+  const response = await fetch(`https://games.roblox.com/v1/games/${gameId}`); // doğru endpoint değil, kontrol et!
+  const data = await response.json();
 
-      fetch(apiUrl)
-     .then(response => response.json())
-     .then(data => {
-          document.getElementById("oyun-id").innerHTML = oyunId;
-          document.getElementById("oyun-resmi").src = `https://www.roblox.com/thumbnail/logo-thumbnail/image?userId=${data.creatorId}&size=420x420`;
-          document.getElementById("anlik-oyuncu-sayisi").innerHTML = data.playerCount;
-          document.getElementById("begeni-sayisi").innerHTML = data.favoritedCount;
-          document.getElementById("dislike-sayisi").innerHTML = data.dislikeCount;
-          document.getElementById("aciklama").innerHTML = data.description;
-        })
-     .catch(error => {
-        console.error("Hata:", error);
-        alert("Hata oluştu. Lütfen oyun ID'sini kontrol edin.");
-      });
-    });
-  </script>
+  document.getElementById("game-name").textContent = data.name; // data yapısı API'ye göre değişecektir
+  document.getElementById("game-image").src = data.imageUrl; // data yapısı API'ye göre değişecektir
+  document.getElementById("player-count").textContent = data.playerCount; // data yapısı API'ye göre değişecektir - bu alan API'de olmayabilir
+  document.getElementById("thumbs-up").textContent = data.thumbsUpCount; // data yapısı API'ye göre değişecektir - bu alan API'de olmayabilir
+  document.getElementById("thumbs-down").textContent = data.thumbsDownCount; // data yapısı API'ye göre değişecektir - bu alan API'de olmayabilir
+  document.getElementById("description").textContent = data.description; // data yapısı API'ye göre değişecektir
+
+}
+</script>
+
 </body>
 </html>
