@@ -1,90 +1,98 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="tr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Roblox Game Info</title>
+    <title>Roblox Oyun Bilgisi</title>
     <style>
         body {
             background-color: black;
             color: white;
             font-family: Arial, sans-serif;
-            padding: 20px;
-        }
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 20px;
             text-align: center;
-            border: 1px solid #444;
-            border-radius: 8px;
+            margin: 0;
+            padding: 20px;
         }
-        .input-group {
+
+        h1 {
             margin-bottom: 20px;
         }
-        input[type="text"] {
-            padding: 8px;
-            width: calc(100% - 16px);
+
+        input {
+            padding: 10px;
+            width: 80%;
             margin-bottom: 10px;
+            border: none;
+            border-radius: 5px;
         }
+
         button {
             padding: 10px 20px;
-            background: #555;
             border: none;
+            background-color: #4CAF50;
             color: white;
+            border-radius: 5px;
             cursor: pointer;
-            border-radius: 4px;
+            font-size: 16px;
         }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .game-info {
+            margin-top: 20px;
+        }
+
         img {
-            max-width: 100%;
+            width: 100%;
             height: auto;
-            margin-top: 20px;
-        }
-        .info {
-            margin-top: 20px;
+            border-radius: 5px;
+            margin-bottom: 10px;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Roblox Game Details</h1>
-        <div class="input-group">
-            <input type="text" id="gameIdInput" placeholder="Enter Roblox Game ID">
-            <button onclick="fetchGameData()">Get Game Info</button>
-        </div>
-        <div class="info" id="gameInfo">
-            <!-- Game details will appear here -->
+        <h1>Roblox Oyun Bilgisi</h1>
+        <input type="text" id="gameId" placeholder="Roblox Oyun ID'sini girin">
+        <button onclick="getGameInfo()">Bilgi Al</button>
+        
+        <div id="gameInfo" class="game-info" style="display: none;">
+            <img id="gameImage" alt="Oyun Resmi">
+            <h2 id="gameTitle"></h2>
+            <p id="gameDescription"></p>
+            <p>Anlık Oyuncu Sayısı: <span id="playerCount"></span></p>
+            <p>Beğeni: <span id="likes"></span> | Beğenmeme: <span id="dislikes"></span></p>
         </div>
     </div>
 
     <script>
-        async function fetchGameData() {
-            const gameId = document.getElementById('gameIdInput').value;
-            if (!gameId) {
-                alert("Please enter a game ID.");
-                return;
-            }
+        async function getGameInfo() {
+            const gameId = document.getElementById("gameId").value;
+
+            // API URL'si (Doğru API'yi kontrol edin)
+            const url = `https://api.roproxy.com/games/${gameId}`; // Geçerli bir API sağlayıcısı kullanılmalıdır.
 
             try {
-                const response = await fetch(`https://api.roblox.com/v1/games?universeIds=${gameId}`);
-                const data = await response.json();
-                
-                if (data.data.length > 0) {
-                    const gameDetails = data.data[0];
+                const response = await fetch(url);
+                if (!response.ok) throw new Error('Ağ hatası');
 
-                    document.getElementById('gameInfo').innerHTML = `
-                        <h2>${gameDetails.name}</h2>
-                        <img src="${gameDetails.thumbnailUrl}" alt="${gameDetails.name} Thumbnail">
-                        <p>Current Players: ${gameDetails.playerCount}</p>
-                        <p>Likes: ${gameDetails.upvoteCount}, Dislikes: ${gameDetails.downvoteCount}</p>
-                        <p>${gameDetails.description}</p>
-                    `;
-                } else {
-                    document.getElementById('gameInfo').innerHTML = "<p>Game not found or invalid ID.</p>";
-                }
+                const data = await response.json();
+
+                // Oyunun bilgilerini ekranda gösterme
+                document.getElementById("gameImage").src = data.thumbnailUrl;  // Doğru anahtarları kullanın
+                document.getElementById("gameTitle").innerText = data.name;
+                document.getElementById("gameDescription").innerText = data.description;
+                document.getElementById("playerCount").innerText = data.playerCount;
+                document.getElementById("likes").innerText = data.likeCount; // Doğru anahtar kullandığınızdan emin olun
+                document.getElementById("dislikes").innerText = data.dislikeCount; // Doğru anahtar kullandığınızdan emin olun
+
+                // Oyun bilgilerini göster
+                document.getElementById("gameInfo").style.display = 'block';
             } catch (error) {
-                console.error('Error fetching game data:', error);
-                document.getElementById('gameInfo').innerHTML = "<p>There was an error retrieving the game data. Please try again later.</p>";
+                console.error("Hata:", error);
+                alert("Bilgiler alınamadı. Lütfen geçerli bir Roblox Oyun ID'si girin.");
             }
         }
     </script>
