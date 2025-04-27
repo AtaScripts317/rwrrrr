@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Roblox Oyun Bilgileri</title>
+  <style>
+    body {
+      background-color: #000; /* Siyah arka plan */
+      color: #fff; /* Beyaz metin rengi */
+    }
+  </style>
+</head>
+<body>
+  <h1>Roblox Oyun Bilgileri</h1>
+  <input id="oyun-id-input" type="text" placeholder="Oyun ID'sini girin">
+  <button id="oyun-bilgileri-getir">Getir</button>
+  <div id="oyun-bilgileri">
+    <p>Oyun ID: <span id="oyun-id"></span></p>
+    <p>Anlık Oyuncu Sayısı: <span id="anlik-oyuncu-sayisi"></span></p>
+    <p>Beğeni: <span id="begeni-sayisi"></span></p>
+    <p>Dislike: <span id="dislike-sayisi"></span></p>
+    <p>Açıklama: <span id="aciklama"></span></p>
+  </div>
+  <script>
+    const oyunIdInput = document.getElementById("oyun-id-input");
+    const oyunBilgileriGetirButton = document.getElementById("oyun-bilgileri-getir");
+    const oyunBilgileriDiv = document.getElementById("oyun-bilgileri");
+
+    oyunBilgileriGetirButton.addEventListener("click", () => {
+      const oyunId = oyunIdInput.value;
+      const apiUrl = `https://api.roblox.com/games/${oyunId}`;
+
+      fetch(apiUrl)
+      .then(response => response.json())
+      .then(data => {
+          document.getElementById("oyun-id").innerHTML = oyunId;
+          document.getElementById("anlik-oyuncu-sayisi").innerHTML = data.playerCount;
+          document.getElementById("begeni-sayisi").innerHTML = data.favoritedCount;
+          document.getElementById("dislike-sayisi").innerHTML = data.dislikeCount;
+          document.getElementById("aciklama").innerHTML = data.description;
+        })
+      .catch(error => console.error("Hata:", error));
+    });
+  </script>
+</body>
+</html>
